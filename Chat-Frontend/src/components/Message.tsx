@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import ChatMessage from "./ChatMessage"
 import styles from "./page.module.css"
 
-console.log(BACKEND_URL);
+
 interface Message {
   sender: string
   message: string
