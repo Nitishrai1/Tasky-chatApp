@@ -39,7 +39,7 @@ wss.on('connection', async (socket: WebSocket) => {
         await newMessage.save();
 
         wss.clients.forEach(client => {
-            if (client !== socket && client.readyState === WebSocket.OPEN) {
+            if (client.readyState === WebSocket.OPEN) {
                 client.send(JSON.stringify(data));
             }
         });
