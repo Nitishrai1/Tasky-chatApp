@@ -16,14 +16,15 @@ const express_1 = __importDefault(require("express"));
 const http_1 = require("http");
 const ws_1 = require("ws");
 const cors_1 = __importDefault(require("cors"));
-const dotenv_1 = __importDefault(require("dotenv"));
 const Message_1 = require("./model/Message");
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const mongoose_1 = __importDefault(require("mongoose"));
-const MONGODB_URL = process.env.MONGODB_URL;
+const MONGODB_URL = process.env.MONGODB_URL || "";
+console.log(MONGODB_URL);
 mongoose_1.default.connect(MONGODB_URL)
     .then(() => console.log("Database connected "))
     .catch(err => console.error("failed to connect database"));
-dotenv_1.default.config();
 const app = (0, express_1.default)();
 const server = (0, http_1.createServer)(app);
 const wss = new ws_1.WebSocketServer({ server });

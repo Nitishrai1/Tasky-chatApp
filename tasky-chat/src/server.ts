@@ -2,17 +2,17 @@ import express, { Request, Response } from 'express';
 import { createServer } from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
 import cors from 'cors';
-import dotenv from 'dotenv';
+
 import { Message } from './model/Message';
-
+import dotenv from 'dotenv';
+dotenv.config();
 import mongoose from 'mongoose';
-const MONGODB_URL:any =process.env.MONGODB_URL
-
+const MONGODB_URL:string=process.env.MONGODB_URL || ""
+console.log(MONGODB_URL);
 mongoose.connect(MONGODB_URL)
 .then(()=>console.log("Database connected "))
 .catch(err=> console.error("failed to connect database"));
 
-dotenv.config();
 
 const app = express();
 const server = createServer(app);
