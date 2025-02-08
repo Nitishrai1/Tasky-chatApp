@@ -3,9 +3,8 @@
 import { useState, useEffect, useRef } from "react"
 import ChatMessage from "./ChatMessage"
 import styles from "./page.module.css"
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-
+console.log(BACKEND_URL);
 interface Message {
   sender: string
   message: string
@@ -19,7 +18,7 @@ export default function Messages() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const newSocket = new WebSocket(BACKEND_URL)
+    const newSocket = new WebSocket("wss://tasky-chatapp.onrender.com")
 
     newSocket.onopen = () => {
       console.log("Connected to WebSocket")
