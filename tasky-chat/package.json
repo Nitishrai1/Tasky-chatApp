@@ -4,9 +4,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-     "build":"tsc",
-     "start":"node dist/server.js",
-     "dev":"tsc && node dist/server.js"
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "tsc && node dist/server.js"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +17,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "http": "^0.0.1-security",
+    "mongoose": "^8.10.0",
     "ws": "^8.18.0"
   },
   "devDependencies": {
