@@ -20,7 +20,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const Message_1 = require("./model/Message");
 const mongoose_1 = __importDefault(require("mongoose"));
 const MONGODB_URL = process.env.MONGODB_URL;
-mongoose_1.default.connect("mongodb+srv://nitishraigkp007:z6InbXvBf7QluDgq@tasky-database.nq1km.mongodb.net/Tasky")
+mongoose_1.default.connect(MONGODB_URL)
     .then(() => console.log("Database connected "))
     .catch(err => console.error("failed to connect database"));
 dotenv_1.default.config();
