@@ -14,7 +14,7 @@ export default function Messages() {
   const [socket, setSocket] = useState<WebSocket | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [inputMessage, setInputMessage] = useState("")
-  const [sender] = useState("nitish")
+  const [sender,setSender] = useState("")
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -29,8 +29,10 @@ export default function Messages() {
       const data = JSON.parse(event.data)
       if (data.type === "history") {
         setMessages(data.data)
+        
       } else {
-        setMessages((prevMessages) => [...prevMessages, data])
+        setMessages((prevMessages) => [...prevMessages, data]);
+        setSender(data.sender);
       }
     }
 
