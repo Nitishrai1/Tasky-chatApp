@@ -13,46 +13,53 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const http_1 = require("http");
 const ws_1 = require("ws");
 const cors_1 = __importDefault(require("cors"));
-const Message_1 = require("./model/Message");
 const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
 const mongoose_1 = __importDefault(require("mongoose"));
-const MONGODB_URL = process.env.MONGODB_URL || "";
-console.log(MONGODB_URL);
-mongoose_1.default.connect(MONGODB_URL)
-    .then(() => console.log("Database connected "))
-    .catch(err => console.error("failed to connect database"));
+const Message_1 = require("./model/Message");
+dotenv_1.default.config();
 const app = (0, express_1.default)();
-const server = (0, http_1.createServer)(app);
-const wss = new ws_1.WebSocketServer({ server });
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
-wss.on('connection', (socket) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('New WebSocket connection established');
-    // Send previous messages from DB to new user
-    const messages = yield Message_1.Message.find().sort({ timestamp: 1 });
-    if (messages != null) {
-        console.log(messages);
-        socket.send(JSON.stringify({ type: 'history', data: messages }));
+const MONGODB_URL = process.env.MONGODB_URL || "";
+mongoose_1.default.connect(MONGODB_URL)
+    .then(() => console.log("MongoDB connected"))
+    .catch(err => console.error("MongoDB connection failed:", err));
+const httpserver = app.listen(8080, () => {
+    console.log("Server listening on port 8080");
+});
+const wss = new ws_1.WebSocketServer({ server: httpserver });
+wss.on('connection', (ws) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('New WebSocket connection');
+    try {
+        const messages = yield Message_1.Message.find().sort({ timestamp: 1 });
+        ws.send(JSON.stringify({ type: 'history', data: messages }));
     }
-    socket.on('message', (message) => __awaiter(void 0, void 0, void 0, function* () {
-        const data = JSON.parse(message);
-        console.log('Received:', data);
-        const newMessage = new Message_1.Message({
-            sender: data.sender,
-            message: data.message
-        });
-        yield newMessage.save();
-        wss.clients.forEach(client => {
-            if (client !== socket && client.readyState === ws_1.WebSocket.OPEN) {
-                client.send(JSON.stringify(data));
-            }
-        });
+    catch (err) {
+        console.error('Error sending history:', err);
+    }
+    ws.on('error', (err) => {
+        console.error('WebSocket error:', err);
+    });
+    ws.on('message', (message, isBinary) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const data = JSON.parse(message);
+            console.log('Message received:', data);
+            const newMessage = new Message_1.Message({
+                sender: data.sender,
+                message: data.message
+            });
+            yield newMessage.save();
+            wss.clients.forEach((client) => {
+                if (client.readyState === ws_1.WebSocket.OPEN) {
+                    client.send(JSON.stringify(data), { binary: isBinary });
+                }
+            });
+        }
+        catch (err) {
+            console.error('Error handling message:', err);
+        }
     }));
-    socket.send(JSON.stringify({ message: 'Connected to WebSocket server' }));
+    ws.send(JSON.stringify({ message: 'Connected to WebSocket server' }));
 }));
-const PORT = process.env.PORT || 8080;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

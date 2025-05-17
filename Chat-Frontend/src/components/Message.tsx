@@ -14,7 +14,7 @@ export default function Messages() {
   const [socket, setSocket] = useState<WebSocket | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [inputMessage, setInputMessage] = useState("")
-  const [sender,setSender] = useState("")
+  const [sender,setSender] = useState("nitish")
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
